@@ -1,0 +1,26 @@
+
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: sathelp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  backend:
+    build: ./backend
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/sathelp
+      SECRET_KEY: supersecret
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app
+volumes:
+  db-data:
